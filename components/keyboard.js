@@ -43,3 +43,5 @@ addEventListener("keypress", function (e) {
 addEventListener("keyup", function (e) {
      game.players.forEach((player) => player.keyboard.keyUpHandler(e));
 });
+
+export default Keyboard;

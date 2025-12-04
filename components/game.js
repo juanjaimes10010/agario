@@ -1,3 +1,7 @@
+import Player from "./player.js";
+import PowerUp from "./powerup.js";
+import Helper from "./helper.js";
+
 class Game {
      constructor({ width = 0, height = 0 }) {
           this.canvas = document.getElementById("canvas");
@@ -7,6 +11,8 @@ class Game {
           this.canvas.width = this.width;
           this.canvas.height = this.height;
           this.animationFrame = null;
+
+          this.entities = [];
 
           this.players = [
                new Player({
@@ -46,35 +52,6 @@ class Game {
      }
 }
 
-Game.prototype.update = function () {
-     this.players.forEach((player) => {
-          if (player.keyboard.key_order.size > 0 && player.keyboard.checkCurrentKey() == player.keyboard.DOWN_ARROW) {
-               player.blob.ay = 0.02;
-               player.blob.vx = 0;
-               player.blob.ax = 0;
-          } else if (player.keyboard.key_order.size > 0 && player.keyboard.checkCurrentKey() == player.keyboard.UP_ARROW) {
-               player.blob.ay = -0.02;
-               player.blob.vx = 0;
-               player.blob.ax = 0;
-          } else if (player.keyboard.key_order.size > 0 && player.keyboard.checkCurrentKey() == player.keyboard.LEFT_ARROW) {
-               player.blob.ax = -0.02;
-               player.blob.vy = 0;
-               player.blob.ay = 0;
-          } else if (player.keyboard.key_order.size > 0 && player.keyboard.checkCurrentKey() == player.keyboard.RIGHT_ARROW) {
-               player.blob.ax = 0.02;
-               player.blob.vy = 0;
-               player.blob.ay = 0;
-          }
-
-          if (player.blob.left >= this.width) player.blob.setRightPosition(1);
-          if (player.blob.right <= 0) player.blob.setLeftPosition(this.width - 1);
-          if (player.blob.top >= this.height) player.blob.setBottomPosition(1);
-          if (player.blob.bottom <= 0) player.blob.setTopPosition(this.height - 1);
-
-          player.blob.updatePosition();
-     });
-};
-
 Game.prototype.drawBackground = function () {
      for (let x = -this.width; x < this.width * 2; x += 45) {
           this.ctx.moveTo(x, -this.height);
@@ -104,7 +81,7 @@ Game.prototype.checkCollision = function () {
                player.blob.checkCollision(powerUp, function () {
                     player.blob.points++;
                     player.blob.grow();
-                    powerUp.setCenterPosition(random(10, self.width), random(10, self.height - 10));
+                    powerUp.setCenterPosition(Helper.random(10, self.width), Helper.random(10, self.height - 10));
                     document.querySelector(player.blob.element).innerHTML = player.blob.points;
                });
           });
@@ -121,6 +98,35 @@ Game.prototype.start = function () {
      this.animationFrame = window.requestAnimationFrame(this.start.bind(this));
 };
 
+Game.prototype.update = function () {
+     this.players.forEach((player) => {
+          if (player.keyboard.key_order.size > 0 && player.keyboard.checkCurrentKey() == player.keyboard.DOWN_ARROW) {
+               player.blob.ay = 0.02;
+               player.blob.vx = 0;
+               player.blob.ax = 0;
+          } else if (player.keyboard.key_order.size > 0 && player.keyboard.checkCurrentKey() == player.keyboard.UP_ARROW) {
+               player.blob.ay = -0.02;
+               player.blob.vx = 0;
+               player.blob.ax = 0;
+          } else if (player.keyboard.key_order.size > 0 && player.keyboard.checkCurrentKey() == player.keyboard.LEFT_ARROW) {
+               player.blob.ax = -0.02;
+               player.blob.vy = 0;
+               player.blob.ay = 0;
+          } else if (player.keyboard.key_order.size > 0 && player.keyboard.checkCurrentKey() == player.keyboard.RIGHT_ARROW) {
+               player.blob.ax = 0.02;
+               player.blob.vy = 0;
+               player.blob.ay = 0;
+          }
+
+          if (player.blob.left >= this.width) player.blob.setRightPosition(1);
+          if (player.blob.right <= 0) player.blob.setLeftPosition(this.width - 1);
+          if (player.blob.top >= this.height) player.blob.setBottomPosition(1);
+          if (player.blob.bottom <= 0) player.blob.setTopPosition(this.height - 1);
+
+          player.blob.updatePosition();
+     });
+};
+
 Game.prototype.stop = function () {
      window.cancelAnimationFrame(this.animationFrame);
 };
@@ -129,3 +135,5 @@ Game.prototype.reset = function () {
      this.players.forEach((player) => player.blob.reset());
      this.start();
 };
+
+export default Game;

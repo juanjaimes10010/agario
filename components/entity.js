@@ -133,3 +133,5 @@ Entity.prototype.reset = function (x = 10, y = 10) {
      this.fx = 0;
      this.fy = 0;
 };
+
+export default Entity;
