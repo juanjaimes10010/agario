@@ -3,6 +3,11 @@ class Game {
     constructor() {
         this.entities = {};
         this.systems = {};
+
+
+        this.addSystem( new RenderSystem() );
+        this.addSystem( new KeyboardSystem() );
+        // this.addSystem( new )
     }
 
     addSystem( system ) {
@@ -45,14 +50,18 @@ class Game {
 
 
 
-
 new Game().start();
 
 
+
+
 class RenderSystem {
+
     constructor() {
         this.requiredComponents = ['position', 'color', 'shape'];
         this.entities = {};
+        this.width = innerWidth;
+        this.height = innerHeight;
     }
 
     add( entity ) {
@@ -68,6 +77,29 @@ class RenderSystem {
             
         }
     }
+
+    isWithinBounds( entity ) {
+        switch ( entity.shape ) {
+            case 'circle':
+                return this.isCircleWithinBounds( entity );
+            case 'rectangle':
+                return this.isRectWithinBounds( entity );
+            case 'polygon':
+                return this.isPolygonWithinBounds( entity );
+            default:
+                return false;
+        }
+    } 
+
+    isCircleWithinBounds( entity ) {
+        if( entity.position.x + entity.radius < 0 ) return;
+        if( entity.position.x - entity.radius > this.width ) return;
+        if( entity.position.y + entity.radius > this.height ) return;
+        if( entity.position.y - entity.radius < 0) return;
+    }
+    isRectWithinBounds( entity ) {}
+    isPolygonWithinBounds( entity ) {}
+
 }
 
 class KeyboardSystem {
@@ -101,3 +133,4 @@ class KeyboardSystem {
         }
     }
 }
+
